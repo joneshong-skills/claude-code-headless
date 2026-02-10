@@ -329,17 +329,9 @@ Background process started:
 
 ---
 
-## Looking up Claude Code documentation via DeepWiki
+## Looking up Claude Code documentation
 
-When encountering unfamiliar flags, features, hooks, SDK usage, MCP server configuration, or any Claude Code topic not covered above, query the official repository documentation using the DeepWiki MCP server.
-
-### Query the repo
-
-```
-mcp__deepwiki__ask_question
-  repoName: "anthropics/claude-code"
-  question: "<specific question about Claude Code>"
-```
+When encountering unfamiliar flags, features, hooks, SDK usage, MCP server configuration, or any Claude Code topic not covered above, use the **smart-search** skill to query documentation. Smart-search automatically routes queries across DeepWiki, Context7, and Perplexity for the best answer.
 
 ### Example queries
 
@@ -354,16 +346,7 @@ mcp__deepwiki__ask_question
 "How does context compaction work in Claude Code?"
 ```
 
-### Browse available topics
-
-```
-mcp__deepwiki__read_wiki_structure
-  repoName: "anthropics/claude-code"
-```
-
-Use this to discover which documentation sections exist before asking a targeted question.
-
-### When to query DeepWiki
+### When to look up documentation
 
 - A flag or option is not documented in this skill
 - The user asks about hooks, SDK, or MCP server integration
