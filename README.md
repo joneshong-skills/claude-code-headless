@@ -1,3 +1,5 @@
+[English](README.md) | [繁體中文](README.zh.md)
+
 # claude-code-headless
 
 Run Claude Code in headless mode (`claude -p`) on macOS. Use it to run Claude Code programmatically, execute headless prompts, get structured JSON output, auto-approve tools, pipe output, create commits via CLI, and integrate Claude Code into scripts, cron jobs, and CI/CD workflows.
