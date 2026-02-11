@@ -24,7 +24,11 @@ claude -p "Return only the single word OK."
 
 If `claude` is not found, install via:
 ```bash
-npm install -g @anthropic-ai/claude-code
+# Recommended (native installer)
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Or via Homebrew
+brew install --cask claude-code
 ```
 
 ---
