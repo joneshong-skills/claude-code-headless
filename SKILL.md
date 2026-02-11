@@ -1,6 +1,7 @@
 ---
 name: claude-code-headless
 description: "Run Claude Code in headless mode (`claude -p`) on macOS. Use when the user asks to run Claude Code programmatically, execute headless prompts, use `claude -p`, get structured JSON output, auto-approve tools with --allowedTools, pipe output, create commits via CLI, integrate Claude Code into scripts, cron jobs, and CI/CD workflows on macOS, or asks about Claude Code CLI features, flags, hooks, SDK, or MCP server configuration."
+version: 0.1.0
 argument-hint: "[prompt or flags]"
 ---
 
