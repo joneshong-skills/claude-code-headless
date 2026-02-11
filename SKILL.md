@@ -1,6 +1,12 @@
 ---
 name: claude-code-headless
-description: "Run Claude Code in headless mode (`claude -p`) on macOS. Use when the user asks to run Claude Code programmatically, execute headless prompts, use `claude -p`, get structured JSON output, auto-approve tools with --allowedTools, pipe output, create commits via CLI, integrate Claude Code into scripts, cron jobs, and CI/CD workflows on macOS, or asks about Claude Code CLI features, flags, hooks, SDK, or MCP server configuration."
+description: >-
+  This skill should be used when the user asks to "run Claude Code headless",
+  "use claude -p", "execute a headless prompt", "Claude Code 腳本",
+  "pipe output from Claude Code", "auto-approve tools",
+  or discusses running Claude Code programmatically, integrating into scripts,
+  cron jobs, CI/CD workflows, structured JSON output, or Claude Code CLI
+  features, flags, hooks, SDK, and MCP server configuration on macOS.
 version: 0.1.0
 argument-hint: "[prompt or flags]"
 ---
@@ -328,7 +334,7 @@ Background process started:
 2. **Explore -> Plan -> Implement** -- use `--permission-mode plan` first, then switch to execution
 3. **Keep `--allowedTools` narrow** -- principle of least privilege
 4. **Use `--output-format json`** for machine-readable results in scripts
-5. **Capture `session_id`** when you need multi-turn conversations
+5. **Capture `session_id`** for multi-turn conversations
 6. **Use CLAUDE.md** for persistent per-project rules (build commands, style guides)
 7. **Pipe liberally** -- treat `claude -p` as a Unix utility
 
