@@ -40,6 +40,19 @@ brew install --cask claude-code
 
 ---
 
+## Nested session caveat
+
+Claude Code **refuses to launch inside another Claude Code session** (nesting protection). If invoking `claude -p` from within Claude Code (e.g., via maestro, skill testing, or automation):
+
+```bash
+# Unset the environment variable that triggers nesting detection
+unset CLAUDECODE && claude -p "Your prompt here"
+```
+
+Without this, you'll get: `Error: Claude Code cannot be launched inside another Claude Code session.`
+
+---
+
 ## Headless mode basics
 
 Add `-p` (or `--print`) to run non-interactively. All CLI options work with `-p`.
@@ -248,6 +261,84 @@ See `references/recipes.md` for detailed background mode examples, output format
 
 ---
 
+## Leveraging skills in headless mode
+
+Claude Code in headless mode has full access to all skills in `~/.claude/skills/`. When crafting
+a headless prompt, you can directly instruct it to use any available skill — Claude Code natively
+discovers and loads SKILL.md files from its skill directory.
+
+### Available skills (auto-discovered from `~/.claude/skills/`)
+
+| Category | Skills |
+|----------|--------|
+| **Content & Docs** | `content-writer`, `doc-coauthoring`, `readme-gen`, `changelog-gen`, `marketing-copy` |
+| **Visual & Design** | `diagram-gen`, `canvas-design`, `frontend-design`, `image-gen`, `image-prompt`, `image-edit`, `theme-factory`, `brand-guidelines` |
+| **Office & Files** | `pdf`, `docx`, `pptx`, `xlsx`, `ocr` |
+| **Search & Research** | `smart-search`, `brainstorming`, `competitive-intel`, `model-mentor` |
+| **Development** | `test-driven-development`, `systematic-debugging`, `spec-kit`, `mcp-builder`, `git-worktrees`, `ui-audit`, `verification-before-completion` |
+| **Skill Mgmt** | `create-skill`, `skill-optimizer`, `skill-publisher`, `skill-catalog`, `skill-curator`, `skill-tester`, `skill-graph`, `skill-lifecycle` |
+| **Multi-Agent** | `maestro`, `team-tasks`, `codex-cli-headless`, `gemini-cli-headless` |
+| **NotebookLM** | `notebook-bridge`, `notebookllm-mentor`, `notebooklm-visual` |
+| **macOS & Other** | `macos-ui-automation`, `blink-builder`, `sync-config`, `meeting-insights`, `openclaw-mentor` |
+
+### How to use skills in headless prompts
+
+```bash
+# Direct skill invocation — Claude Code auto-discovers SKILL.md
+unset CLAUDECODE && claude -p "Use your diagram-gen skill to create a flowchart: Login → Auth → Dashboard" \
+  --allowedTools "Bash,Read,Write,Edit,Glob,Grep"
+
+# Chain skills — smart-search then content-writer
+unset CLAUDECODE && claude -p "Use your smart-search skill to research MCP protocol, then use content-writer skill to draft a blog post about it. Save to ~/Claude/skills/output/" \
+  --allowedTools "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+
+# Skill + structured output
+unset CLAUDECODE && claude -p "Use your image-prompt skill to generate a prompt for: cyberpunk city at sunset" \
+  --output-format json | jq -r '.result'
+```
+
+### Tips
+
+- Claude Code **natively loads** skills — no need to tell it to `cat` the SKILL.md
+- Use `--allowedTools` to grant the tools each skill needs (check the skill's `tools:` frontmatter)
+- For skills that need Playwright or MCP tools, use `--permission-mode bypassPermissions`
+- Skills that produce file output follow the convention: `~/Claude/skills/{skill-name}/YYYY-MM-DD-{name}.{ext}`
+
+---
+
+## Policy & Compliance (Last verified: 2026-02-14)
+
+> This section is monitored daily by the Daily Intelligence Briefing (Topic 6: 開發工具政策).
+> When policy changes are detected, the briefing will flag "ACTION REQUIRED: 更新 headless skill".
+
+### Current Anthropic Policy
+
+| Item | Status | Detail |
+|------|--------|--------|
+| **Subscription token + third-party harness** | BLOCKED | Anthropic actively blocks third-party tools spoofing the official Claude Code client using Pro/Pro 5x/Pro 20x subscription tokens. Affected: OpenCode, Moltbot, etc. |
+| **API Key integration** | ALLOWED | Using `claude -p` with your own API key for headless/programmatic use is explicitly supported and encouraged. |
+| **Web UI wrapping local CLI** | GRAY AREA | Tools like CloudCLI, Happy, claude-code-webui wrap the actual `claude` binary — not spoofing, but Anthropic's stance is tightening. Monitor closely. |
+| **Official Claude Code Web** | AVAILABLE | Anthropic offers `claude.ai/code` as the official web interface. |
+| **ToS key clause** | IN EFFECT | "Except when accessing via an Anthropic API Key or where we explicitly permit it, [you may not] access the Services through automated or non-human means, whether through a bot, script, or otherwise." |
+
+### Safe Integration Patterns
+
+```
+SAFE:     claude -p "..." (with API key, headless mode)
+SAFE:     claude -p "..." --output-format json (structured output for pipelines)
+RISKY:    Third-party UI using subscription token (may be blocked)
+BLOCKED:  Spoofing official client identity with subscription token
+```
+
+### Policy Change History
+
+| Date | Change |
+|------|--------|
+| 2026-01 | Anthropic blocks third-party harnesses spoofing Claude Code client (VentureBeat report) |
+| 2025-12 | Consumer ToS updated with automated access restrictions |
+
+---
+
 ## Best practices
 
 1. **Always give Claude a way to verify** -- include tests or build commands in your prompt
@@ -265,6 +356,25 @@ See `references/recipes.md` for detailed background mode examples, output format
 For unfamiliar flags, hooks, SDK, or MCP configuration, use the **smart-search** skill to query documentation. See `references/recipes.md` for example queries and guidance on when to look up docs.
 
 ---
+
+## Continuous Improvement
+
+This skill evolves with each use. After every invocation:
+
+1. **Reflect** — Identify what worked, what caused friction, and any unexpected issues
+2. **Record** — Append a concise lesson to `lessons.md` in this skill's directory
+3. **Refine** — When a pattern recurs (2+ times), update SKILL.md directly
+
+### lessons.md Entry Format
+
+```
+### YYYY-MM-DD — Brief title
+- **Friction**: What went wrong or was suboptimal
+- **Fix**: How it was resolved
+- **Rule**: Generalizable takeaway for future invocations
+```
+
+Accumulated lessons signal when to run `/skill-optimizer` for a deeper structural review.
 
 ## Additional Resources
 
